@@ -88,8 +88,6 @@ namespace planning_interface
 const std::string MoveGroupInterface::ROBOT_DESCRIPTION =
     "robot_description";  // name of the robot description (a param name, so it can be changed externally)
 
-const std::string GRASP_PLANNING_SERVICE_NAME = "plan_grasps";  // name of the service that can be used to plan grasps
-
 namespace
 {
 enum ActiveTargetType
