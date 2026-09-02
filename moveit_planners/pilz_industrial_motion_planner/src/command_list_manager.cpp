@@ -165,10 +165,9 @@ void CommandListManager::checkForOverlappingRadii(const MotionResponseCont& resp
 CommandListManager::RobotState_OptRef
 CommandListManager::getPreviousEndState(const MotionResponseCont& motion_plan_responses, const std::string& group_name)
 {
-  const auto it = std::find_if(motion_plan_responses.crbegin(), motion_plan_responses.crend(),
-                               [&group_name](const auto& response) {
-                                 return response.trajectory->getGroupName() == group_name;
-                               });
+  const auto it =
+      std::find_if(motion_plan_responses.crbegin(), motion_plan_responses.crend(),
+                   [&group_name](const auto& response) { return response.trajectory->getGroupName() == group_name; });
   if (it != motion_plan_responses.crend())
   {
     return std::reference_wrapper(it->trajectory->getLastWayPoint());
