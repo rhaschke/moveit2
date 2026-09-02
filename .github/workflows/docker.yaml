@@ -59,6 +59,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/docker.build.yaml
     with:
+      base_job: ci
       image: moveit/moveit2:${{ matrix.ROS_DISTRO }}-ci-testing
       dockerfile: .docker/ci-testing/Dockerfile
       ros_distro: ${{ matrix.ROS_DISTRO }}
@@ -76,6 +77,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/docker.build.yaml
     with:
+      base_job: ci-testing
       image: moveit/moveit2:${{ matrix.ROS_DISTRO }}-source
       dockerfile: .docker/source/Dockerfile
       ros_distro: ${{ matrix.ROS_DISTRO }}
@@ -93,6 +95,7 @@ jobs:
       contents: read
     uses: ./.github/workflows/docker.build.yaml
     with:
+      base_job: source
       image: moveit/moveit2:main-${{ matrix.ROS_DISTRO }}-tutorial-source
       dockerfile: .docker/tutorial-source/Dockerfile
       ros_distro: ${{ matrix.ROS_DISTRO }}

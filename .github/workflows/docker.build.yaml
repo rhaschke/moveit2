@@ -3,6 +3,9 @@ name: Build Docker image
 on:
   workflow_call:
     inputs:
+      base_job:
+        required: false
+        type: string
       image:
         required: true
         type: string
@@ -60,6 +63,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Download image artifact
+        uses: actions/download-artifact@v8
+        if: ${{ inputs.base_job }}
+        with:
+          name: ${{ inputs.base_job }}
+          path: ${{ runner.temp }}
+
+      - name: Extract image artifact
+        if: ${{ inputs.base_job }}
+        run: |
+          docker load --input ${{ runner.temp }}/image.tar
+          docker image ls -a
+
       - name: Cache
         uses: actions/cache@v5
         id: cache
@@ -83,12 +99,16 @@ jobs:
           context: ${{ inputs.full_source_context && '.' || '' }}
           file: ${{ inputs.dockerfile }}
           build-args: ROS_DISTRO=${{ inputs.ros_distro }}
-          push: ${{ env.PUSH }}
+          outputs: ${{ env.PUSH && 'type=registry,name="${{ inputs.image }}, ghcr.io/${{ inputs.image }}"' || 'type=docker,dest=${{ runner.temp }}/${{ github.job }}.tar' }}
           no-cache: ${{ (inputs.check_apt_updates && steps.apt.outputs.no_cache) || github.event_name == 'workflow_dispatch' }}
           cache-to: type=gha,mode=max
           cache-from: |
             type=gha
             type=registry,ref=ghcr.io/${{ inputs.image }}
-          tags: |
-            ${{ inputs.image }}
-            ghcr.io/${{ inputs.image }}
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v7
+        if: env.PUSH == 'false'
+        with:
+          name: ${{ github.job }}
+          path: ${{ runner.temp }}/image.tar
