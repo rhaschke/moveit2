@@ -103,7 +103,6 @@ TEST_P(CollisionDetectorTests, Threaded)
 
   std::vector<moveit::core::RobotState> states;
   std::vector<std::thread> threads;
-  threads.reserve(states.size());
   std::vector<bool> collisions;
 
   collision_detection::CollisionPluginCache loader;
